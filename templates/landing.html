@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUBAYER LIKE SHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a1628;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        
+        :root {
+            --navy: #0a1628;
+            --blue: #1a5cff;
+            --cyan: #00d4ff;
+            --gold: #ffb800;
+            --white: #ffffff;
+            --gray: #8899bb;
+        }
+        
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-animation .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(26,92,255,0.1), transparent 70%);
+            animation: float 25s infinite ease-in-out;
+        }
+        .bg-animation .circle:nth-child(1) { width: 500px; height: 500px; top: -150px; left: -150px; animation-delay: 0s; }
+        .bg-animation .circle:nth-child(2) { width: 400px; height: 400px; bottom: -100px; right: -100px; animation-delay: -7s; }
+        .bg-animation .circle:nth-child(3) { width: 250px; height: 250px; top: 40%; left: 60%; animation-delay: -12s; }
+        .bg-animation .circle:nth-child(4) { width: 600px; height: 600px; top: -200px; right: -150px; animation-delay: -18s; background: radial-gradient(circle, rgba(255,184,0,0.05), transparent 70%); }
+        .bg-animation .circle:nth-child(5) { width: 200px; height: 200px; bottom: 20%; left: 10%; animation-delay: -5s; background: radial-gradient(circle, rgba(0,212,255,0.06), transparent 70%); }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(60px, -40px) scale(1.08); }
+            50% { transform: translate(-30px, 50px) scale(0.92); }
+            75% { transform: translate(40px, 25px) scale(1.04); }
+        }
+        
+        /* ===== SCROLL ANIMATION ===== */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 22, 40, 0.88);
+            backdrop-filter: blur(25px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(26, 92, 255, 0.12);
+            animation: slideDown 0.8s ease;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-80px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+        .logo img {
+            height: 42px;
+            width: 42px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 184, 0, 0.2);
+            animation: logoGlow 3s infinite;
+        }
+        @keyframes logoGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 184, 0, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(255, 184, 0, 0.25); }
+        }
+        .logo span { color: var(--gold); }
+        
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .nav-links .btn-nav {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: var(--white);
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-size: 15px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            animation: btnGlow 2.5s infinite;
+            box-shadow: 0 0 30px rgba(26, 92, 255, 0.2);
+        }
+        @keyframes btnGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(26, 92, 255, 0.15); }
+            50% { box-shadow: 0 0 50px rgba(26, 92, 255, 0.35); }
+        }
+        .nav-links .btn-nav:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 40px rgba(26, 92, 255, 0.4);
+        }
+        
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 30px 50px;
+            min-height: 80vh;
+        }
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            animation: fadeInUp 1s ease;
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .hero-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            border: 2px solid rgba(255, 184, 0, 0.2);
+            padding: 10px;
+            animation: logoRotateGlow 5s infinite;
+        }
+        @keyframes logoRotateGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(255, 184, 0, 0.08); transform: rotate(0deg); }
+            50% { box-shadow: 0 0 60px rgba(255, 184, 0, 0.2); transform: rotate(4deg) scale(1.02); }
+        }
+        .hero-logo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+        
+        .hero h1 {
+            font-size: 60px;
+            font-weight: 900;
+            color: var(--white);
+            margin-bottom: 12px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--white), var(--cyan), var(--white));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: textGradient 4s ease infinite, textGlow 3s infinite;
+        }
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        @keyframes textGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.08)); }
+            50% { filter: drop-shadow(0 0 50px rgba(0, 212, 255, 0.2)); }
+        }
+        .hero h1 .gold {
+            background: linear-gradient(135deg, var(--gold), #ff6b00, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: goldGradient 3s ease infinite;
+        }
+        @keyframes goldGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .hero p {
+            font-size: 18px;
+            color: var(--gray);
+            margin-bottom: 30px;
+            line-height: 1.9;
+            letter-spacing: 0.3px;
+        }
+        .hero p i {
+            color: var(--gold);
+            margin-right: 6px;
+            animation: iconPulse 2s infinite;
+        }
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .hero p .sep {
+            color: rgba(255,255,255,0.08);
+            margin: 0 8px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-hero {
+            padding: 14px 42px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.4s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .btn-hero:hover::after {
+            opacity: 1;
+        }
+        .btn-hero-primary {
+            background: linear-gradient(135deg, var(--gold), #ff6b00);
+            color: var(--navy);
+            animation: goldBtnGlow 2.5s infinite;
+            box-shadow: 0 0 30px rgba(255, 184, 0, 0.15);
+        }
+        @keyframes goldBtnGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(255, 184, 0, 0.15); }
+            50% { box-shadow: 0 0 60px rgba(255, 184, 0, 0.35); }
+        }
+        .btn-hero-primary:hover {
+            transform: translateY(-5px) scale(1.04);
+            box-shadow: 0 15px 50px rgba(255, 184, 0, 0.4);
+        }
+        .btn-hero-secondary {
+            background: rgba(255,255,255,0.06);
+            color: var(--white);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            animation: borderPulse 3s infinite;
+        }
+        @keyframes borderPulse {
+            0%, 100% { border-color: rgba(255,255,255,0.12); box-shadow: 0 0 15px rgba(255,255,255,0.02); }
+            50% { border-color: rgba(0, 212, 255, 0.3); box-shadow: 0 0 40px rgba(0, 212, 255, 0.08); }
+        }
+        .btn-hero-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px) scale(1.04);
+            box-shadow: 0 10px 40px rgba(255,255,255,0.05);
+        }
+        
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 40px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .stat-item {
+            text-align: center;
+            animation: fadeUp 0.8s ease both;
+        }
+        .stat-item:nth-child(1) { animation-delay: 0.05s; }
+        .stat-item:nth-child(2) { animation-delay: 0.1s; }
+        .stat-item:nth-child(3) { animation-delay: 0.15s; }
+        .stat-item:nth-child(4) { animation-delay: 0.2s; }
+        
+        .stat-item .number {
+            font-size: 38px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold), #ff6b00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: statPulse 2s infinite;
+        }
+        @keyframes statPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .stat-item .label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        .stat-item i {
+            color: var(--cyan);
+            font-size: 22px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        /* ===== FEATURES ===== */
+        .features {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            padding: 40px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(12px);
+            padding: 26px 20px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeUp 0.8s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(26,92,255,0.03), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        .feature-card:nth-child(1) { animation-delay: 0.05s; }
+        .feature-card:nth-child(2) { animation-delay: 0.1s; }
+        .feature-card:nth-child(3) { animation-delay: 0.15s; }
+        .feature-card:nth-child(4) { animation-delay: 0.2s; }
+        
+        @keyframes fadeUp {
+            from { transform: translateY(25px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 184, 0, 0.15);
+            box-shadow: 0 15px 50px rgba(26, 92, 255, 0.08);
+        }
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(26,92,255,0.15), rgba(0,212,255,0.15));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 24px;
+            color: var(--cyan);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: iconFloat 3s infinite;
+        }
+        .feature-card:nth-child(1) .feature-icon { animation-delay: 0s; }
+        .feature-card:nth-child(2) .feature-icon { animation-delay: 0.5s; }
+        .feature-card:nth-child(3) .feature-icon { animation-delay: 1s; }
+        .feature-card:nth-child(4) .feature-icon { animation-delay: 1.5s; }
+        
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.12) rotate(5deg);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.12);
+        }
+        .feature-card h3 {
+            color: var(--white);
+            font-size: 17px;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .feature-card p {
+            color: var(--gray);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        /* ===== REVIEWS ===== */
+        .reviews {
+            position: relative;
+            z-index: 1;
+            padding: 40px 40px 50px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .reviews-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 30px;
+        }
+        .reviews-title span {
+            background: linear-gradient(135deg, var(--gold), #ff6b00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .reviews-title i {
+            color: var(--gold);
+            margin-right: 8px;
+            animation: starPulse 2s infinite;
+        }
+        @keyframes starPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .review-card {
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(12px);
+            padding: 24px 22px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeUp 0.8s ease both;
+        }
+        .review-card:nth-child(1) { animation-delay: 0.05s; }
+        .review-card:nth-child(2) { animation-delay: 0.15s; }
+        .review-card:nth-child(3) { animation-delay: 0.25s; }
+        
+        .review-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 184, 0, 0.12);
+            box-shadow: 0 10px 40px rgba(26, 92, 255, 0.06);
+        }
+        .review-card .stars {
+            color: var(--gold);
+            font-size: 16px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .review-card .stars i {
+            animation: starGlow 2s infinite;
+        }
+        .review-card .stars i:nth-child(1) { animation-delay: 0s; }
+        .review-card .stars i:nth-child(2) { animation-delay: 0.2s; }
+        .review-card .stars i:nth-child(3) { animation-delay: 0.4s; }
+        .review-card .stars i:nth-child(4) { animation-delay: 0.6s; }
+        .review-card .stars i:nth-child(5) { animation-delay: 0.8s; }
+        @keyframes starGlow {
+            0%, 100% { text-shadow: 0 0 5px rgba(255, 184, 0, 0.2); }
+            50% { text-shadow: 0 0 20px rgba(255, 184, 0, 0.4); }
+        }
+        
+        .review-card .review-text {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        .review-card .review-text i {
+            color: var(--cyan);
+            opacity: 0.4;
+        }
+        .review-card .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .review-card .reviewer .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--white);
+        }
+        .review-card .reviewer .name {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .review-card .reviewer .role {
+            color: var(--gray);
+            font-size: 12px;
+        }
+        
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            position: relative;
+            z-index: 1;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .cta-section h2 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+        .cta-section h2 span {
+            background: linear-gradient(135deg, var(--gold), #ff6b00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cta-section p {
+            color: var(--gray);
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+        .cta-section .btn-hero {
+            padding: 16px 50px;
+            font-size: 18px;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            position: relative;
+            z-index: 1;
+            background: rgba(10, 22, 40, 0.92);
+            backdrop-filter: blur(25px);
+            padding: 22px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            color: var(--gray);
+            font-size: 13px;
+            margin-top: 20px;
+        }
+        .footer .gold { color: var(--gold); }
+        .footer .support-link {
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .footer .support-link:hover {
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 184, 0, 0.15);
+        }
+        .footer .social-links {
+            margin-top: 10px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .footer .social-links a {
+            color: var(--gray);
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        .footer .social-links a:hover {
+            color: var(--gold);
+            transform: translateY(-3px);
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .features { grid-template-columns: repeat(2, 1fr); }
+            .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        }
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
+            .logo { font-size: 18px; }
+            .logo img { height: 32px; width: 32px; }
+            .nav-links .btn-nav { font-size: 13px; padding: 8px 20px; }
+            .hero { padding: 40px 15px 30px; min-height: 65vh; }
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 14px; }
+            .features { grid-template-columns: 1fr 1fr; padding: 20px; gap: 12px; }
+            .feature-card { padding: 18px 14px; }
+            .btn-hero { padding: 11px 28px; font-size: 14px; }
+            .hero-logo { width: 70px; height: 70px; }
+            .stats-bar { grid-template-columns: 1fr 1fr; padding: 20px; gap: 12px; }
+            .stat-item .number { font-size: 28px; }
+            .reviews-grid { grid-template-columns: 1fr; padding: 0 10px; }
+            .reviews { padding: 20px 15px; }
+            .reviews-title { font-size: 24px; }
+            .cta-section { padding: 30px 20px; }
+            .cta-section h2 { font-size: 26px; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 24px; }
+            .hero-logo { width: 55px; height: 55px; }
+            .btn-hero { padding: 8px 18px; font-size: 12px; gap: 5px; }
+            .hero p { font-size: 12px; }
+            .features { grid-template-columns: 1fr 1fr; gap: 8px; padding: 15px; }
+            .feature-card { padding: 12px 10px; }
+            .feature-card h3 { font-size: 12px; }
+            .feature-card p { font-size: 10px; }
+            .feature-icon { width: 36px; height: 36px; font-size: 15px; }
+            .stats-bar { grid-template-columns: 1fr 1fr; gap: 8px; padding: 15px; }
+            .stat-item .number { font-size: 22px; }
+            .stat-item .label { font-size: 11px; }
+            .stat-item i { font-size: 16px; }
+            .reviews-title { font-size: 20px; }
+            .cta-section h2 { font-size: 20px; }
+            .cta-section p { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== BACKGROUND ANIMATION ===== -->
+    <div class="bg-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <a href="/" class="logo">
+            <img src="https://i.ibb.co.com/TBgQ8ZpL/photo-2026-08-05-20-08-45.jpg" alt="JUBAYER LIKE SHOP">
+            JUBAYER <span>LIKE SHOP</span>
+        </a>
+        <div class="nav-links">
+            <a href="/login" class="btn-nav"><i class="fas fa-key"></i> Login</a>
+        </div>
+    </nav>
+    
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-logo">
+                <img src="https://i.ibb.co.com/TBgQ8ZpL/photo-2026-08-05-20-08-45.jpg" alt="JUBAYER LIKE SHOP">
+            </div>
+            <h1>Get <span class="gold">Free Fire</span><br>Likes Instantly</h1>
+            <p>
+                <i class="fas fa-fire"></i> Premium Free Fire Like API Service
+                <span class="sep">|</span>
+                <i class="fas fa-bolt"></i> 100% Working & Fast Delivery
+                <span class="sep">|</span>
+                <i class="fas fa-coins"></i> Affordable Credits & Daily Limits
+            </p>
+            <div class="hero-buttons">
+                <a href="/login" class="btn-hero btn-hero-primary"><i class="fas fa-rocket"></i> Get Access</a>
+                <a href="https://t.me/JubayerExe" class="btn-hero btn-hero-secondary"><i class="fas fa-shopping-cart"></i> Buy Credits</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- ===== STATS BAR ===== -->
+    <section class="stats-bar scroll-reveal">
+        <div class="stat-item">
+            <i class="fas fa-users"></i>
+            <div class="number">10K+</div>
+            <div class="label">Happy Users</div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-heart"></i>
+            <div class="number">5M+</div>
+            <div class="label">Likes Delivered</div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-check-circle"></i>
+            <div class="number">99.9%</div>
+            <div class="label">Success Rate</div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-clock"></i>
+            <div class="number">24/7</div>
+            <div class="label">Active Service</div>
+        </div>
+    </section>
+    
+    <!-- ===== FEATURES ===== -->
+    <section class="features" id="features">
+        <div class="feature-card scroll-reveal">
+            <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+            <h3>Instant Delivery</h3>
+            <p>Likes delivered within seconds after request</p>
+        </div>
+        <div class="feature-card scroll-reveal">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>Secure & Safe</h3>
+            <p>100% safe with our encrypted system</p>
+        </div>
+        <div class="feature-card scroll-reveal">
+            <div class="feature-icon"><i class="fas fa-coins"></i></div>
+            <h3>Affordable Credits</h3>
+            <p>Best prices for Free Fire like API credits</p>
+        </div>
+        <div class="feature-card scroll-reveal">
+            <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+            <h3>Detailed Analytics</h3>
+            <p>Track your usage, logs & history</p>
+        </div>
+    </section>
+    
+    <!-- ===== REVIEWS ===== -->
+    <section class="reviews">
+        <h2 class="reviews-title scroll-reveal">
+            <i class="fas fa-star"></i> What Our <span>Users Say</span>
+        </h2>
+        <div class="reviews-grid">
+            <div class="review-card scroll-reveal">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="review-text">
+                    "<i class="fas fa-quote-left"></i> Best Free Fire like API I've ever used! Super fast delivery and amazing support. Highly recommended! <i class="fas fa-quote-right"></i>"
+                </div>
+                <div class="reviewer">
+                    <div class="avatar">R</div>
+                    <div>
+                        <div class="name">Rakib Hasan</div>
+                        <div class="role">Free Fire Player</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="review-card scroll-reveal">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="review-text">
+                    "<i class="fas fa-quote-left"></i> I've been using this service for months. The credits are cheap and the likes always work perfectly. 10/10! <i class="fas fa-quote-right"></i>"
+                </div>
+                <div class="reviewer">
+                    <div class="avatar">S</div>
+                    <div>
+                        <div class="name">Sadia Akter</div>
+                        <div class="role">Content Creator</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="review-card scroll-reveal">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="review-text">
+                    "<i class="fas fa-quote-left"></i> The daily limit feature is really helpful. I can manage my likes easily. Great service from Jubayer Like Shop! <i class="fas fa-quote-right"></i>"
+                </div>
+                <div class="reviewer">
+                    <div class="avatar">J</div>
+                    <div>
+                        <div class="name">Jubayer Ahmed</div>
+                        <div class="role">Gamer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- ===== CTA SECTION ===== -->
+    <section class="cta-section scroll-reveal">
+        <h2>Ready to <span>Boost</span> Your Likes?</h2>
+        <p>Join thousands of satisfied users and start getting Free Fire likes instantly</p>
+        <a href="/login" class="btn-hero btn-hero-primary"><i class="fas fa-rocket"></i> Get Started Now</a>
+    </section>
+    
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p><i class="fas fa-copyright"></i> 2026 <span class="gold">JUBAYER LIKE SHOP</span> | All Rights Reserved</p>
+        <p style="margin-top: 4px; font-size: 12px;">
+            <i class="fas fa-headset"></i> Support: <a href="https://t.me/JubayerExe" target="_blank" class="support-link">@JubayerExe</a>
+        </p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+        </div>
+    </footer>
+    
+    <script>
+        // ===== SCROLL REVEAL ANIMATION =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

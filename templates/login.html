@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - JUBAYER LIKE SHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a1628;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-animation .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(26,92,255,0.1), transparent 70%);
+            animation: float 20s infinite ease-in-out;
+        }
+        .bg-animation .circle:nth-child(1) { width: 400px; height: 400px; top: -100px; left: -100px; animation-delay: 0s; }
+        .bg-animation .circle:nth-child(2) { width: 300px; height: 300px; bottom: -50px; right: -50px; animation-delay: -5s; }
+        .bg-animation .circle:nth-child(3) { width: 200px; height: 200px; top: 50%; left: 50%; animation-delay: -10s; }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 50px) scale(0.9); }
+            75% { transform: translate(30px, 20px) scale(1.05); }
+        }
+        
+        .login-card {
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            padding: 45px 40px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: fadeInUp 0.8s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(30px) scale(0.95); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        .login-card .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .login-card .logo img {
+            width: 70px;
+            height: 70px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 184, 0, 0.2);
+            animation: pulseGlow 3s infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 184, 0, 0.1); }
+            50% { box-shadow: 0 0 40px rgba(255, 184, 0, 0.3); }
+        }
+        .login-card .logo h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        .login-card .logo h1 span { color: #ffb800; }
+        .login-card .logo p {
+            color: #8899bb;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        
+        .flash-messages { margin-bottom: 20px; }
+        .flash {
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .flash-success {
+            background: rgba(0,200,83,0.15);
+            border: 1px solid #00c853;
+            color: #00c853;
+        }
+        .flash-danger {
+            background: rgba(255,23,68,0.15);
+            border: 1px solid #ff1744;
+            color: #ff1744;
+        }
+        .flash-info {
+            background: rgba(26,92,255,0.15);
+            border: 1px solid #1a5cff;
+            color: #1a5cff;
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            color: #8899bb;
+            font-weight: 600;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .form-group label i { margin-right: 6px; color: #ffb800; }
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.05);
+            color: #ffffff;
+        }
+        .form-group input::placeholder { color: #445566; }
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a5cff;
+            box-shadow: 0 0 30px rgba(26, 92, 255, 0.15);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1a5cff, #00d4ff);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: glowPulse 2s infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(26, 92, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(26, 92, 255, 0.6); }
+        }
+        .btn-login i { margin-right: 10px; }
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(26, 92, 255, 0.4);
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #8899bb;
+            font-size: 13px;
+        }
+        .login-footer a {
+            color: #ffb800;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .login-footer a:hover {
+            text-shadow: 0 0 20px rgba(255, 184, 0, 0.3);
+        }
+        .login-footer .support-link {
+            color: #00d4ff;
+            margin-left: 5px;
+        }
+        .login-footer .support-link:hover {
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        @media (max-width: 480px) {
+            .login-card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    
+    <div class="login-card">
+        <div class="logo">
+            <img src="https://i.ibb.co.com/TBgQ8ZpL/photo-2026-08-05-20-08-45.jpg" alt="JUBAYER LIKE SHOP">
+            <h1><i class="fas fa-trophy" style="color: #ffb800;"></i> <span>JUBAYER</span> LIKE SHOP</h1>
+            <p><i class="fas fa-key"></i> Enter your API Key to continue</p>
+        </div>
+        
+        <div class="flash-messages" id="flashMessages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}"><i class="fas fa-info-circle"></i> {{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label><i class="fas fa-key"></i> API Key</label>
+                <input type="text" name="api_key" placeholder="Enter your API Key" required>
+            </div>
+            <button type="submit" class="btn-login"><i class="fas fa-unlock"></i> Sign In</button>
+        </form>
+        
+        <div class="login-footer">
+            <i class="fas fa-question-circle"></i> Don't have a key? Contact 
+            <a href="https://t.me/JubayerExe" target="_blank" class="support-link"><i class="fas fa-headset"></i> Support</a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var flashMessages = document.getElementById('flashMessages');
+            if (flashMessages && flashMessages.children.length > 0) {
+                setTimeout(function() {
+                    flashMessages.style.transition = 'opacity 0.5s ease';
+                    flashMessages.style.opacity = '0';
+                    setTimeout(function() {
+                        flashMessages.style.display = 'none';
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
