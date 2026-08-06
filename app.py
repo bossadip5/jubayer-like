@@ -5,6 +5,7 @@ import secrets
 import string
 import requests
 import json
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jubayer-like-shop-secret-key-2026'
@@ -33,7 +34,7 @@ class APIKey(db.Model):
     is_auto_deactivated = db.Column(db.Boolean, default=False)
     deactivated_at = db.Column(db.DateTime)
     
-    logs = db.relationship('APILog', backref='api_key_obj', lazy=True)
+    logs = db.relationship('APILog', backref='api_key_obj', lazy=True, cascade='all, delete-orphan')
     
     def generate_key(self):
         random_part = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(15))
@@ -74,7 +75,7 @@ class APIKey(db.Model):
 
 class APILog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    api_key_id = db.Column(db.Integer, db.ForeignKey('api_key.id'), nullable=False)
+    api_key_id = db.Column(db.Integer, db.ForeignKey('api_key.id', ondelete='CASCADE'), nullable=False)
     uid = db.Column(db.String(50))
     server = db.Column(db.String(10))
     likes_given = db.Column(db.Integer, default=0)
@@ -315,9 +316,17 @@ def delete_key(key_id):
     
     key = APIKey.query.get(key_id)
     if key:
-        db.session.delete(key)
-        db.session.commit()
-        flash('✅ Key deleted!', 'success')
+        # CASCADE কাজ না করলে ম্যানুয়ালি Log Delete
+        try:
+            db.session.delete(key)
+            db.session.commit()
+            flash('✅ Key deleted!', 'success')
+        except Exception as e:
+            # যদি Error হয়, তাহলে Log গুলো Delete করে আবার চেষ্টা করো
+            APILog.query.filter_by(api_key_id=key.id).delete()
+            db.session.delete(key)
+            db.session.commit()
+            flash('✅ Key deleted with logs!', 'success')
     return redirect(url_for('admin_panel'))
 
 @app.route('/admin/update_main_api', methods=['POST'])
