@@ -24,7 +24,7 @@ class APIKey(db.Model):
     daily_limit = db.Column(db.Integer, default=10)
     validity_days = db.Column(db.Integer, default=30)
     min_like_usage = db.Column(db.Integer, default=1)
-    api_type = db.Column(db.String(20), default='100')  # '100' or '200'
+    api_type = db.Column(db.String(20), default='100')
     
     credits_used = db.Column(db.Integer, default=0)
     daily_used = db.Column(db.Integer, default=0)
@@ -83,8 +83,8 @@ class APILog(db.Model):
     likes_before = db.Column(db.Integer, default=0)
     likes_after = db.Column(db.Integer, default=0)
     player_name = db.Column(db.String(100))
-    status = db.Column(db.String(20))  # Success, Partial Success, Failed
-    credit_used = db.Column(db.Integer, default=0)  # 1 or 0
+    status = db.Column(db.String(20))
+    credit_used = db.Column(db.Integer, default=0)
     response_data = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -92,7 +92,7 @@ class MainAPISetting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), default='Main API')
     url = db.Column(db.String(500))
-    api_type = db.Column(db.String(20), default='100')  # '100' or '200'
+    api_type = db.Column(db.String(20), default='100')
     use_api_key = db.Column(db.Boolean, default=False)
     api_key = db.Column(db.String(100), default='')
     is_active = db.Column(db.Boolean, default=True)
@@ -204,12 +204,8 @@ def api_like():
     # Get main API based on user's api_type
     main_api = MainAPISetting.query.filter_by(api_type=user_key.api_type, is_active=True).first()
     
-    # Fallback: if no API found for specific type, get any active
     if not main_api:
-        main_api = MainAPISetting.query.filter_by(is_active=True).first()
-    
-    if not main_api:
-        return jsonify({'error': 'Main API not configured for this type'}), 500
+        return jsonify({'error': f'API not configured for {user_key.api_type} likes'}), 500
     
     if main_api.use_api_key and main_api.api_key:
         main_url = f"{main_api.url}?uid={uid}&server_name={server_name}&key={main_api.api_key}"
@@ -225,30 +221,20 @@ def api_like():
         likes_after = data.get('LikesafterCommand', 0)
         player_name = data.get('PlayerNickname', 'Unknown')
         
-        # Determine status and credit usage
-        status = 'Failed'
-        credit_used = 0
-        status_display = 'Failed'
-        
-        if likes_given == 0:
-            status = 'Failed'
-            credit_used = 1  # Still deduct credit for failed attempt
-            status_display = 'Failed'
-        elif likes_given < user_key.min_like_usage:
-            status = 'Partial Success'
-            credit_used = 1
-            status_display = 'Partial Success'
-        else:
+        # ===== CREDIT LOGIC =====
+        # শুধু min_like_usage এর বেশি likes_given হলে credit কাটবে
+        if likes_given >= user_key.min_like_usage:
+            # Success - credit কাটবে
+            user_key.use_credit()
             status = 'Success'
             credit_used = 1
-            status_display = 'Success'
-        
-        # Deduct credit if any like was given (even partial)
-        if likes_given > 0:
-            user_key.use_credit()
         else:
-            # Still deduct credit for API call even if 0 likes
-            user_key.use_credit()
+            # Partial Success বা Failed - credit কাটবে না
+            status = 'Partial Success' if likes_given > 0 else 'Failed'
+            credit_used = 0
+            # কিন্তু daily limit তে count হবে (API call তো হয়েছে)
+            user_key.daily_used += 1
+            db.session.commit()
         
         log = APILog(
             api_key_id=user_key.id,
@@ -266,14 +252,7 @@ def api_like():
         db.session.add(log)
         db.session.commit()
         
-        # Return with status info
-        response_data = {
-            **data,
-            'status_display': status_display,
-            'credit_used': credit_used
-        }
-        
-        return jsonify(response_data)
+        return jsonify(data)
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
