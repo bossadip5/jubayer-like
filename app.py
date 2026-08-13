@@ -221,20 +221,18 @@ def api_like():
         likes_after = data.get('LikesafterCommand', 0)
         player_name = data.get('PlayerNickname', 'Unknown')
         
-        # ===== CREDIT LOGIC =====
-        # শুধু min_like_usage এর বেশি likes_given হলে credit কাটবে
+        # ===== CREDIT + DAILY LIMIT LOGIC =====
+        # শুধু min_like_usage এর বেশি likes_given হলে credit কাটবে এবং daily limit কাটবে
         if likes_given >= user_key.min_like_usage:
-            # Success - credit কাটবে
-            user_key.use_credit()
+            # Success - credit কাটবে + daily limit কাটবে
+            user_key.use_credit()  # credits_used++ এবং daily_used++ করে
             status = 'Success'
             credit_used = 1
         else:
-            # Partial Success বা Failed - credit কাটবে না
+            # Partial Success বা Failed - credit কাটবে না, daily limit কাটবে না
             status = 'Partial Success' if likes_given > 0 else 'Failed'
             credit_used = 0
-            # কিন্তু daily limit তে count হবে (API call তো হয়েছে)
-            user_key.daily_used += 1
-            db.session.commit()
+            # daily_used বাড়াবো না, কারণ শুধু সফল হলে daily limit কাটবে
         
         log = APILog(
             api_key_id=user_key.id,
