@@ -24,9 +24,11 @@
             --white: #ffffff;
             --gray: #8899bb;
             --glow: 0 0 30px rgba(26, 92, 255, 0.2);
+            --green: #00c853;
+            --red: #ff1744;
+            --yellow: #ffd600;
         }
         
-        /* ===== NAVBAR ===== */
         .navbar {
             background: rgba(10, 22, 40, 0.85);
             backdrop-filter: blur(20px);
@@ -79,7 +81,7 @@
         .nav-right .admin-badge i { margin-right: 6px; }
         .nav-right .logout-btn {
             background: rgba(255,23,68,0.15);
-            color: #ff1744;
+            color: var(--red);
             padding: 6px 18px;
             border-radius: 25px;
             text-decoration: none;
@@ -94,7 +96,6 @@
             box-shadow: 0 0 30px rgba(255,23,68,0.2);
         }
         
-        /* ===== ADMIN CONTAINER ===== */
         .admin-container {
             padding: 25px 30px;
             max-width: 1400px;
@@ -183,6 +184,7 @@
             box-shadow: 0 0 30px rgba(26, 92, 255, 0.1);
         }
         .form-grid input::placeholder { color: #445566; }
+        .form-grid select option { background: #0a1628; color: white; }
         
         .btn-submit {
             padding: 10px 24px;
@@ -218,7 +220,7 @@
             display: inline-block;
         }
         .toggle-switch.active {
-            background: #00c853;
+            background: var(--green);
         }
         .toggle-switch .toggle-dot {
             position: absolute;
@@ -275,11 +277,19 @@
         }
         .badge-active {
             background: rgba(0,200,83,0.15);
-            color: #00c853;
+            color: var(--green);
         }
         .badge-inactive {
             background: rgba(255,23,68,0.15);
-            color: #ff1744;
+            color: var(--red);
+        }
+        .badge-api-100 {
+            background: rgba(26,92,255,0.15);
+            color: var(--blue);
+        }
+        .badge-api-200 {
+            background: rgba(255,184,0,0.15);
+            color: var(--gold);
         }
         
         .action-btns {
@@ -303,9 +313,9 @@
         }
         .btn-sm:hover { transform: scale(1.05); }
         .btn-toggle { background: rgba(255, 184, 0, 0.15); color: var(--gold); }
-        .btn-renew { background: rgba(0,200,83,0.15); color: #00c853; }
-        .btn-delete { background: rgba(255,23,68,0.15); color: #ff1744; }
-        .btn-remove { background: rgba(255,23,68,0.15); color: #ff1744; }
+        .btn-renew { background: rgba(0,200,83,0.15); color: var(--green); }
+        .btn-delete { background: rgba(255,23,68,0.15); color: var(--red); }
+        .btn-remove { background: rgba(255,23,68,0.15); color: var(--red); }
         
         .copy-btn {
             background: rgba(26, 92, 255, 0.15);
@@ -344,7 +354,7 @@
             border: none;
             border-radius: 4px;
             background: rgba(0,200,83,0.2);
-            color: #00c853;
+            color: var(--green);
             font-weight: 600;
             font-size: 11px;
             cursor: pointer;
@@ -384,6 +394,115 @@
             box-shadow: 0 15px 50px rgba(26, 92, 255, 0.5);
         }
         
+        .api-config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .api-config-box {
+            background: rgba(255,255,255,0.02);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .api-config-box .api-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .api-config-box .api-title .badge {
+            font-size: 10px;
+        }
+        .api-config-box .api-url-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: var(--white);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .api-config-box .api-url-input:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+        .api-config-box .api-key-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .api-config-box .api-key-row label {
+            font-size: 12px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+        .api-config-box .api-key-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--blue);
+            cursor: pointer;
+        }
+        .api-config-box .api-key-row input[type="text"] {
+            flex: 1;
+            min-width: 120px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: var(--white);
+            font-size: 12px;
+        }
+        .api-config-box .api-key-row input[type="text"]:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+        .api-config-box .api-key-row input[type="text"].hidden {
+            display: none;
+        }
+        .api-config-box .api-status {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.02);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .api-config-box .api-status .active {
+            color: var(--green);
+        }
+        .api-config-box .api-status .inactive {
+            color: var(--red);
+        }
+        .api-config-box .api-status .url-text {
+            color: var(--gray);
+            font-size: 11px;
+        }
+        .api-config-box .btn-save-api {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: var(--white);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .api-config-box .btn-save-api:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(26, 92, 255, 0.3);
+        }
+        
         @media (max-width: 768px) {
             .navbar { flex-direction: column; gap: 10px; padding: 12px 15px; }
             .admin-container { padding: 15px; }
@@ -392,17 +511,18 @@
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .support-float { bottom: 15px; right: 15px; }
             .support-float a { padding: 10px 18px; font-size: 12px; }
+            .api-config-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
             .admin-container { padding: 10px; }
             .card { padding: 15px; }
             .renew-form input { width: 60px; }
+            .api-config-box .api-key-row { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
 <body>
-    <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
         <a href="/" class="logo">
             <img src="https://i.ibb.co.com/TBgQ8ZpL/photo-2026-08-05-20-08-45.jpg" alt="JUBAYER LIKE SHOP">
@@ -414,7 +534,6 @@
         </div>
     </nav>
     
-    <!-- ===== ADMIN CONTENT ===== -->
     <div class="admin-container">
         <!-- Stats -->
         <div class="stats-grid">
@@ -452,7 +571,11 @@
                         <input type="number" name="daily_limit" placeholder="Daily Limit" required>
                         <input type="number" name="validity_days" placeholder="Validity (Days)" required>
                         <input type="number" name="min_like_usage" placeholder="Min Like Usage" required>
-                        <button type="submit" class="btn-submit"><i class="fas fa-key"></i> Generate</button>
+                        <select name="api_type" required>
+                            <option value="100">100 Like API</option>
+                            <option value="200">200 Like API</option>
+                        </select>
+                        <button type="submit" class="btn-submit" style="grid-column: 1 / -1;"><i class="fas fa-key"></i> Generate</button>
                     </div>
                 </form>
             </div>
@@ -484,54 +607,86 @@
                         </div>
                         <div class="maintenance-info">
                             {% if admin_setting and admin_setting.maintenance_mode %}
-                                <strong style="color: #ff1744;"><i class="fas fa-exclamation-triangle"></i> ON</strong> - Users cannot access
+                                <strong style="color: var(--red);"><i class="fas fa-exclamation-triangle"></i> ON</strong> - Users cannot access
                             {% else %}
-                                <strong style="color: #00c853;"><i class="fas fa-check-circle"></i> OFF</strong> - System operational
+                                <strong style="color: var(--green);"><i class="fas fa-check-circle"></i> OFF</strong> - System operational
                             {% endif %}
                         </div>
                     </div>
                 </form>
             </div>
             
-            <!-- Main API -->
+            <!-- Main API Settings -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-plug"></i> Main API Settings</div>
-                <form method="POST" action="/admin/update_main_api">
-                    <div class="form-grid">
-                        <input type="text" name="url" placeholder="API URL" value="https://like-api-jubayer.vercel.app/like" style="grid-column: 1 / -1;">
-                    </div>
-                    <div class="form-grid" style="margin-top: 10px;">
-                        <div style="display: flex; align-items: center; gap: 10px; grid-column: 1 / -1;">
-                            <label style="font-weight: 600; font-size: 13px; color: var(--gray);">
-                                <i class="fas fa-key"></i> Use API Key:
-                            </label>
-                            <input type="checkbox" name="use_api_key" id="useApiKey" onchange="toggleApiKeyInput()">
-                            <input type="text" name="api_key" id="apiKeyInput" placeholder="Enter API Key" style="flex: 1; display: none; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; color: var(--white);">
+                <div class="api-config-grid">
+                    <!-- 100 Like API -->
+                    <div class="api-config-box">
+                        <div class="api-title">
+                            <span class="badge badge-api-100">100 Likes</span>
+                            <span style="font-size: 11px; color: var(--gray);">API</span>
                         </div>
-                        <button type="submit" class="btn-submit" style="grid-column: 1 / -1;"><i class="fas fa-save"></i> Update API</button>
-                    </div>
-                </form>
-                <div style="margin-top: 10px;">
-                    {% if main_apis %}
-                        {% for api in main_apis %}
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 12px;">
-                                <div>
-                                    <span class="badge badge-active"><i class="fas fa-check"></i> Active</span>
-                                    <span style="color: var(--gray);">{{ api.url[:40] }}...</span>
-                                    {% if api.use_api_key %}
-                                        <span class="badge" style="background: rgba(255, 184, 0, 0.12); color: var(--gold);"><i class="fas fa-key"></i> Key</span>
-                                    {% endif %}
-                                </div>
-                                <a href="/admin/remove_main_api/{{ api.id }}" class="btn-sm btn-remove" onclick="return confirm('Remove this API?')">
+                        
+                        {% set api_100 = main_apis|selectattr('api_type', 'equalto', '100')|first %}
+                        
+                        <form method="POST" action="/admin/update_main_api">
+                            <input type="hidden" name="api_type" value="100">
+                            <input type="text" name="url" class="api-url-input" placeholder="API URL" value="{{ api_100.url if api_100 else '' }}">
+                            
+                            <div class="api-key-row">
+                                <label><i class="fas fa-key"></i> Use Key:</label>
+                                <input type="checkbox" name="use_api_key" id="useApiKey100" {% if api_100 and api_100.use_api_key %}checked{% endif %} onchange="toggleApiKeyInput('100')">
+                                <input type="text" name="api_key" id="apiKeyInput100" placeholder="Enter API Key" value="{{ api_100.api_key if api_100 else '' }}" class="{% if api_100 and api_100.use_api_key %}{% else %}hidden{% endif %}">
+                                <button type="submit" class="btn-save-api"><i class="fas fa-save"></i> Save</button>
+                            </div>
+                        </form>
+                        
+                        <div class="api-status">
+                            {% if api_100 %}
+                                <span class="active"><i class="fas fa-check-circle"></i> Active</span>
+                                <span class="url-text">{{ api_100.url[:35] }}{% if api_100.url|length > 35 %}...{% endif %}</span>
+                                <a href="/admin/remove_main_api/{{ api_100.id }}" class="btn-sm btn-remove" onclick="return confirm('Remove this API?')" style="margin-left: auto;">
                                     <i class="fas fa-trash"></i>
                                 </a>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div style="color: var(--gray); text-align: center; padding: 10px; font-size: 12px;">
-                            <i class="fas fa-info-circle"></i> No API configured
+                            {% else %}
+                                <span class="inactive"><i class="fas fa-times-circle"></i> Not configured</span>
+                            {% endif %}
                         </div>
-                    {% endif %}
+                    </div>
+                    
+                    <!-- 200 Like API -->
+                    <div class="api-config-box">
+                        <div class="api-title">
+                            <span class="badge badge-api-200">200 Likes</span>
+                            <span style="font-size: 11px; color: var(--gray);">API</span>
+                        </div>
+                        
+                        {% set api_200 = main_apis|selectattr('api_type', 'equalto', '200')|first %}
+                        
+                        <form method="POST" action="/admin/update_main_api">
+                            <input type="hidden" name="api_type" value="200">
+                            <input type="text" name="url" class="api-url-input" placeholder="API URL" value="{{ api_200.url if api_200 else '' }}">
+                            
+                            <div class="api-key-row">
+                                <label><i class="fas fa-key"></i> Use Key:</label>
+                                <input type="checkbox" name="use_api_key" id="useApiKey200" {% if api_200 and api_200.use_api_key %}checked{% endif %} onchange="toggleApiKeyInput('200')">
+                                <input type="text" name="api_key" id="apiKeyInput200" placeholder="Enter API Key" value="{{ api_200.api_key if api_200 else '' }}" class="{% if api_200 and api_200.use_api_key %}{% else %}hidden{% endif %}">
+                                <button type="submit" class="btn-save-api"><i class="fas fa-save"></i> Save</button>
+                            </div>
+                        </form>
+                        
+                        <div class="api-status">
+                            {% if api_200 %}
+                                <span class="active"><i class="fas fa-check-circle"></i> Active</span>
+                                <span class="url-text">{{ api_200.url[:35] }}{% if api_200.url|length > 35 %}...{% endif %}</span>
+                                <a href="/admin/remove_main_api/{{ api_200.id }}" class="btn-sm btn-remove" onclick="return confirm('Remove this API?')" style="margin-left: auto;">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            {% else %}
+                                <span class="inactive"><i class="fas fa-times-circle"></i> Not configured</span>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -545,6 +700,7 @@
                         <tr>
                             <th>Name</th>
                             <th>API Key</th>
+                            <th>API Type</th>
                             <th>Limit</th>
                             <th>Used</th>
                             <th>Daily</th>
@@ -561,6 +717,11 @@
                                 {{ key.key[:25] }}...
                                 <button class="copy-btn" onclick="copyKey('{{ key.key }}')"><i class="fas fa-copy"></i></button>
                             </td>
+                            <td>
+                                <span class="badge {% if key.api_type == '100' %}badge-api-100{% else %}badge-api-200{% endif %}">
+                                    {{ key.api_type }} Likes
+                                </span>
+                            </td>
                             <td>{{ key.like_limit }}</td>
                             <td>{{ key.credits_used }}</td>
                             <td>{{ key.daily_used }}/{{ key.daily_limit }}</td>
@@ -575,7 +736,6 @@
                                     <a href="/admin/toggle_key/{{ key.id }}" class="btn-sm btn-toggle" onclick="return confirm('Toggle status?')">
                                         <i class="fas fa-power-off"></i>
                                     </a>
-                                    <!-- Renew Form with Input -->
                                     <form method="POST" action="/admin/renew_key/{{ key.id }}" class="renew-form">
                                         <input type="number" name="extra_likes" placeholder="Add" min="1" required>
                                         <button type="submit" onclick="return confirm('Renew credits?')">
@@ -595,7 +755,6 @@
         </div>
     </div>
     
-    <!-- ===== SUPPORT FLOATING BUTTON ===== -->
     <div class="support-float">
         <a href="https://t.me/JubayerExe" target="_blank">
             <i class="fas fa-headset"></i> Support
@@ -609,15 +768,46 @@
             });
         }
         
-        function toggleApiKeyInput() {
-            const checkbox = document.getElementById('useApiKey');
-            const input = document.getElementById('apiKeyInput');
+        function toggleApiKeyInput(type) {
+            const checkbox = document.getElementById('useApiKey' + type);
+            const input = document.getElementById('apiKeyInput' + type);
             if (checkbox.checked) {
-                input.style.display = 'block';
+                input.classList.remove('hidden');
+                input.style.display = '';
             } else {
+                input.classList.add('hidden');
                 input.style.display = 'none';
             }
         }
+        
+        // On page load, ensure checkbox state matches input visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            // For 100
+            var chk100 = document.getElementById('useApiKey100');
+            var inp100 = document.getElementById('apiKeyInput100');
+            if (chk100 && inp100) {
+                if (chk100.checked) {
+                    inp100.classList.remove('hidden');
+                    inp100.style.display = '';
+                } else {
+                    inp100.classList.add('hidden');
+                    inp100.style.display = 'none';
+                }
+            }
+            
+            // For 200
+            var chk200 = document.getElementById('useApiKey200');
+            var inp200 = document.getElementById('apiKeyInput200');
+            if (chk200 && inp200) {
+                if (chk200.checked) {
+                    inp200.classList.remove('hidden');
+                    inp200.style.display = '';
+                } else {
+                    inp200.classList.add('hidden');
+                    inp200.style.display = 'none';
+                }
+            }
+        });
     </script>
 </body>
 </html>
