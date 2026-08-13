@@ -24,6 +24,7 @@ class APIKey(db.Model):
     daily_limit = db.Column(db.Integer, default=10)
     validity_days = db.Column(db.Integer, default=30)
     min_like_usage = db.Column(db.Integer, default=1)
+    api_type = db.Column(db.String(20), default='100')  # '100' or '200'
     
     credits_used = db.Column(db.Integer, default=0)
     daily_used = db.Column(db.Integer, default=0)
@@ -82,7 +83,8 @@ class APILog(db.Model):
     likes_before = db.Column(db.Integer, default=0)
     likes_after = db.Column(db.Integer, default=0)
     player_name = db.Column(db.String(100))
-    status = db.Column(db.String(20))
+    status = db.Column(db.String(20))  # Success, Partial Success, Failed
+    credit_used = db.Column(db.Integer, default=0)  # 1 or 0
     response_data = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -90,6 +92,7 @@ class MainAPISetting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), default='Main API')
     url = db.Column(db.String(500))
+    api_type = db.Column(db.String(20), default='100')  # '100' or '200'
     use_api_key = db.Column(db.Boolean, default=False)
     api_key = db.Column(db.String(100), default='')
     is_active = db.Column(db.Boolean, default=True)
@@ -198,39 +201,79 @@ def api_like():
     if not is_valid:
         return jsonify({'error': message}), 403
     
-    main_api = MainAPISetting.query.filter_by(is_active=True).first()
+    # Get main API based on user's api_type
+    main_api = MainAPISetting.query.filter_by(api_type=user_key.api_type, is_active=True).first()
     
-    if main_api:
-        if main_api.use_api_key and main_api.api_key:
-            main_url = f"{main_api.url}?uid={uid}&server_name={server_name}&key={main_api.api_key}"
-        else:
-            main_url = f"{main_api.url}?uid={uid}&server_name={server_name}"
+    # Fallback: if no API found for specific type, get any active
+    if not main_api:
+        main_api = MainAPISetting.query.filter_by(is_active=True).first()
+    
+    if not main_api:
+        return jsonify({'error': 'Main API not configured for this type'}), 500
+    
+    if main_api.use_api_key and main_api.api_key:
+        main_url = f"{main_api.url}?uid={uid}&server_name={server_name}&key={main_api.api_key}"
     else:
-        main_url = f"https://like-api-jubayer.vercel.app/like?uid={uid}&server_name={server_name}"
+        main_url = f"{main_api.url}?uid={uid}&server_name={server_name}"
     
     try:
         response = requests.get(main_url, timeout=30)
         data = response.json()
         
+        likes_given = data.get('LikesGivenByAPI', 0)
+        likes_before = data.get('LikesbeforeCommand', 0)
+        likes_after = data.get('LikesafterCommand', 0)
+        player_name = data.get('PlayerNickname', 'Unknown')
+        
+        # Determine status and credit usage
+        status = 'Failed'
+        credit_used = 0
+        status_display = 'Failed'
+        
+        if likes_given == 0:
+            status = 'Failed'
+            credit_used = 1  # Still deduct credit for failed attempt
+            status_display = 'Failed'
+        elif likes_given < user_key.min_like_usage:
+            status = 'Partial Success'
+            credit_used = 1
+            status_display = 'Partial Success'
+        else:
+            status = 'Success'
+            credit_used = 1
+            status_display = 'Success'
+        
+        # Deduct credit if any like was given (even partial)
+        if likes_given > 0:
+            user_key.use_credit()
+        else:
+            # Still deduct credit for API call even if 0 likes
+            user_key.use_credit()
+        
         log = APILog(
             api_key_id=user_key.id,
             uid=uid,
             server=server_name,
-            likes_given=data.get('LikesGivenByAPI', 0),
-            likes_before=data.get('LikesbeforeCommand', 0),
-            likes_after=data.get('LikesafterCommand', 0),
-            player_name=data.get('PlayerNickname', 'Unknown'),
-            status='Success',
+            likes_given=likes_given,
+            likes_before=likes_before,
+            likes_after=likes_after,
+            player_name=player_name,
+            status=status,
+            credit_used=credit_used,
             response_data=json.dumps(data)
         )
-        
-        if data.get('LikesGivenByAPI', 0) >= user_key.min_like_usage:
-            user_key.use_credit()
         
         db.session.add(log)
         db.session.commit()
         
-        return jsonify(data)
+        # Return with status info
+        response_data = {
+            **data,
+            'status_display': status_display,
+            'credit_used': credit_used
+        }
+        
+        return jsonify(response_data)
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -262,6 +305,7 @@ def create_api_key():
     daily_limit = int(request.form.get('daily_limit', 10))
     validity_days = int(request.form.get('validity_days', 30))
     min_like_usage = int(request.form.get('min_like_usage', 1))
+    api_type = request.form.get('api_type', '100')
     
     new_key = APIKey(
         name=name,
@@ -269,6 +313,7 @@ def create_api_key():
         daily_limit=daily_limit,
         validity_days=validity_days,
         min_like_usage=min_like_usage,
+        api_type=api_type,
         expires_at=datetime.utcnow() + timedelta(days=validity_days)
     )
     new_key.generate_key()
@@ -316,13 +361,11 @@ def delete_key(key_id):
     
     key = APIKey.query.get(key_id)
     if key:
-        # CASCADE কাজ না করলে ম্যানুয়ালি Log Delete
         try:
             db.session.delete(key)
             db.session.commit()
             flash('✅ Key deleted!', 'success')
         except Exception as e:
-            # যদি Error হয়, তাহলে Log গুলো Delete করে আবার চেষ্টা করো
             APILog.query.filter_by(api_key_id=key.id).delete()
             db.session.delete(key)
             db.session.commit()
@@ -334,23 +377,31 @@ def update_main_api():
     if not session.get('admin_logged_in'):
         return jsonify({'success': False, 'message': 'Unauthorized'})
     
+    api_type = request.form.get('api_type', '100')
     url = request.form.get('url')
     use_api_key = request.form.get('use_api_key') == 'on'
     api_key = request.form.get('api_key', '')
     
-    MainAPISetting.query.update({MainAPISetting.is_active: False})
-    db.session.commit()
+    # Check if API already exists for this type
+    existing = MainAPISetting.query.filter_by(api_type=api_type).first()
+    if existing:
+        existing.url = url
+        existing.use_api_key = use_api_key
+        existing.api_key = api_key if use_api_key else ''
+        existing.is_active = True
+    else:
+        new_api = MainAPISetting(
+            name=f'{api_type} Like API',
+            url=url,
+            api_type=api_type,
+            use_api_key=use_api_key,
+            api_key=api_key if use_api_key else '',
+            is_active=True
+        )
+        db.session.add(new_api)
     
-    api = MainAPISetting(
-        name='Main API',
-        url=url,
-        use_api_key=use_api_key,
-        api_key=api_key if use_api_key else '',
-        is_active=True
-    )
-    db.session.add(api)
     db.session.commit()
-    flash('✅ Main API updated!', 'success')
+    flash(f'✅ {api_type} Like API updated!', 'success')
     return redirect(url_for('admin_panel'))
 
 @app.route('/admin/update_admin_key', methods=['POST'])
@@ -409,22 +460,39 @@ def setup():
         db.session.add(admin_setting)
         db.session.commit()
     
-    main_api = MainAPISetting.query.first()
-    if not main_api:
-        main_api = MainAPISetting(
-            name='Main API',
+    # Create default 100 Like API
+    api_100 = MainAPISetting.query.filter_by(api_type='100').first()
+    if not api_100:
+        api_100 = MainAPISetting(
+            name='100 Like API',
             url='https://like-api-jubayer.vercel.app/like',
+            api_type='100',
             use_api_key=False,
             api_key='',
             is_active=True
         )
-        db.session.add(main_api)
-        db.session.commit()
+        db.session.add(api_100)
+    
+    # Create default 200 Like API
+    api_200 = MainAPISetting.query.filter_by(api_type='200').first()
+    if not api_200:
+        api_200 = MainAPISetting(
+            name='200 Like API',
+            url='https://like-api-jubayer.vercel.app/like',
+            api_type='200',
+            use_api_key=False,
+            api_key='',
+            is_active=True
+        )
+        db.session.add(api_200)
+    
+    db.session.commit()
     
     return '''
     <h1>✅ Setup Complete!</h1>
     <p><strong>Admin Key:</strong> JLS-ADMIN123456789</p>
-    <p><strong>Main API:</strong> https://like-api-jubayer.vercel.app/like</p>
+    <p><strong>100 Like API:</strong> https://like-api-jubayer.vercel.app/like</p>
+    <p><strong>200 Like API:</strong> https://like-api-jubayer.vercel.app/like</p>
     <p><a href="/">Home</a> | <a href="/login">Login</a> | <a href="/admin/panel">Admin</a></p>
     '''
 
